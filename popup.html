@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title id="titleHtml">Title</title>
+  <link rel="stylesheet" type="text/css" />
+    <style>
+      html {
+        
+        height: 50px;
+        width: 150px;
+      }
+      body {
+        font-size: 100%;
+        font-weight: bold;
+        font-family: 'Times New Roman', Times, serif;
+      }
+      input[type="text"] {
+        width: 60%;
+      }
+      img {
+        vertical-align: text-bottom;
+      }
+      .text-content  {
+        margin-top: 4px;
+        max-height: 200px;
+        overflow: scroll;
+        display: none;
+      }
+      .top-bar {
+        width: 100%;
+      }
+      ::-webkit-scrollbar {
+          -webkit-appearance: none;
+          width: 7px;
+      }
+      ::-webkit-scrollbar-thumb {
+          border-radius: 4px;
+          background-color: rgba(0,0,0,.5);
+          -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+      } 
+    </style>
+</head>
+
+<body>
+  <div class="input-group col-md-2">
+    <div id="wrapper">
+      <form class="categoryForm" autocomplete="off" style="">
+        <input type="checkbox" class="showHistory" name="history" value="History">
+        <input type="text" class="searchIdInput" name="fname" maxlength="6" size="4" placeholder="Cortex+">
+        <span class="menu"><a class="menu-link" href="#"><img src="menu.png"></a></span>
+        <!–– button value="history" id="searchHistory" style="display: inline-block" Search-->
+        <script src="jquery-3.4.0.min.js"></script>
+        <script src="popup.js"></script>
+      </form>
+    </div>
+  </div>
+  </div>
+      <div class="control-bar"></div>
+      <div class="text-content" visible="false">
+        <div id="text-rows"></div>
+      </div>
+    </div>
+</body>
+</html>

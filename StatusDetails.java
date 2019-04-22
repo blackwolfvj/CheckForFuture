@@ -14,6 +14,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -27,7 +28,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.toedter.calendar.JDateChooser;
-import javax.swing.JButton;
 
 public class StatusDetails extends JFrame {
 
@@ -242,7 +242,8 @@ public class StatusDetails extends JFrame {
 		Button button = new Button("Submit");
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				app.insertData(screenType.toString(),storyIdtxt.getText(),
+				app.insertData(Integer.parseInt(storyIdtxt.getText().split("/")[1]),screenType.toString(),
+						storyIdtxt.getText().split("/")[0],
 						subsysCmb.getSelectedItem().toString(),
 						moduleCmb.getSelectedItem().toString(),
 						fnNametxt.getText(),dateFormat.format(startDate.getDate()),
@@ -495,12 +496,34 @@ public class StatusDetails extends JFrame {
 		panel_2.add(btnDownload);
 		
 		btnDownload.addActionListener(new ActionListener() {
-			
 			public void actionPerformed(ActionEvent e) {
 				app.downloadDetails();
-				
 			}
 		});
+		
+		button_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				app.updateData(Integer.parseInt(storyIdtxt2.getText().split("/")[1]),screenType2.toString(),
+						storyIdtxt2.getText().split("/")[0],
+						subSystxt2.getText(),
+						moduleTxt2.getText(),
+						fnNameCmb2.getSelectedItem().toString(),
+						dateFormat.format(startDate2.getDate()),
+						dateFormat.format(endDate2.getDate()),
+						statusCmb2.getSelectedItem().toString(),
+						initTableCmb2.getSelectedItem().toString(),
+						initScreenCmb2.getSelectedItem().toString(),
+						currTableCmb2.getSelectedItem().toString(),
+						currScreenCmb2.getSelectedItem().toString(),
+						doneCmb2.getSelectedItem().toString(),
+						appGenArea2.getText(),
+						changeReqArea2.getText(),
+						tableArea2.getText(),
+						remarksArea2.getText()
+						);
+			}
+		});
+		
 		rdbtnMaster2.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -547,7 +570,14 @@ public class StatusDetails extends JFrame {
 						remarksArea2.setText(detailsMap.get("remarksArea2"));
 						
 					}else {
-						JOptionPane.showMessageDialog(null, "No Data Found!!! Change fnName or screenType");
+						if(rdbtnMaster2.isSelected()) {
+							rdbtnTransaction2.setSelected(true);
+							screenType2 = "Transaction";
+						}else {
+							rdbtnMaster2.setSelected(true);
+							screenType2 = "Master";
+						}
+//						JOptionPane.showMessageDialog(null, "No Data Found!!! Change fnName or screenType");
 					}
 					//=========change in future
 			    }
@@ -602,7 +632,14 @@ public class StatusDetails extends JFrame {
 						tableArea2.setText(detailsMap.get("tableArea2"));
 						remarksArea2.setText(detailsMap.get("remarksArea2"));
 					}else {
-						JOptionPane.showMessageDialog(null, "No Data Found!!! Change fnName or screenType");
+						if(rdbtnMaster2.isSelected()) {
+							rdbtnTransaction2.setSelected(true);
+							screenType2 = "Transaction";
+						}else {
+							rdbtnMaster2.setSelected(true);
+							screenType2 = "Master";
+						}
+//						JOptionPane.showMessageDialog(null, "No Data Found!!! Change fnName or screenType");
 					}
 					//=========change in future
 			    }
@@ -653,7 +690,14 @@ public class StatusDetails extends JFrame {
 					remarksArea2.setText(detailsMap.get("remarksArea2"));
 					
 				}else {
-					JOptionPane.showMessageDialog(null, "No Data Found!!! Change fnName or screenType");
+					if(rdbtnMaster2.isSelected()) {
+						rdbtnTransaction2.setSelected(true);
+						screenType2 = "Transaction";
+					}else {
+						rdbtnMaster2.setSelected(true);
+						screenType2 = "Master";
+					}
+//					JOptionPane.showMessageDialog(null, "No Data Found!!! Change fnName or screenType");
 				}
 			}
 		});

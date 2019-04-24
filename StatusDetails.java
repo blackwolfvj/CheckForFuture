@@ -10,7 +10,9 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,10 +20,11 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollBar;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
@@ -36,13 +39,22 @@ public class StatusDetails extends JFrame {
 	private JTextField fnNametxt;
 	String screenType = "Master";
 	String screenType2 = "Master";
+	String screenType3 = "Master";
 	private JComboBox fnNameCmb2;
+	private JComboBox empCmbBox;
 	SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	App app = new App();
 	private JTextField storyIdtxt2;
 	private JTextField subSystxt2;
 	private JTextField moduleTxt2;
-
+	private int selectedEmpId = 1487;
+	private final Map<String,Integer> empDetailsMap = new HashMap<String, Integer>();
+	boolean allowAction = true;
+	boolean allowAction3 = true;
+	private JTable table;
+	Map<String,List<String>> moduleMap = new HashMap<String, List<String>>();
+	List<String> functionList = new ArrayList<String>();
+	List<String> functionList3 = new ArrayList<String>();
 	/**
 	 * Launch the application.
 	 */
@@ -63,6 +75,27 @@ public class StatusDetails extends JFrame {
 	 * Create the frame.
 	 */
 	public StatusDetails() {
+		empDetailsMap.put("Thamilarasu",1487);
+		empDetailsMap.put("Arunprasad",1113);
+		empDetailsMap.put("Logesh",1145);
+		empDetailsMap.put("Kalaimathi",1158);
+		empDetailsMap.put("Pavithra",970);
+		empDetailsMap.put("Vinothkumar",1400);
+		empDetailsMap.put("Manikandan",1401);
+		
+		functionList.add("Supplier Category");
+		functionList.add("Payment Term");
+		functionList.add("Revenue Hierarchy");
+		functionList.add("Match Condition Rule");
+		moduleMap.put("Account Payable", functionList);
+		
+		functionList = new ArrayList<>();
+		
+		functionList.add("Payment Term2");
+		functionList.add("Revenue Hierarchy2");
+		functionList.add("Match Condition Rule2");
+		moduleMap.put("Account Receivable", functionList);
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 506, 479);
 		contentPane = new JPanel();
@@ -104,8 +137,8 @@ public class StatusDetails extends JFrame {
 		
 		final JComboBox moduleCmb = new JComboBox();
 		moduleCmb.setBounds(77, 75, 124, 20);
-		moduleCmb.addItem("AR");
-		moduleCmb.addItem("AP");
+		moduleCmb.addItem("Account Payable");
+		moduleCmb.addItem("Account Receivable");
 		moduleCmb.addItem("Procurement");
 		panel.add(moduleCmb);
 		
@@ -301,7 +334,7 @@ public class StatusDetails extends JFrame {
 		tabbedPane.addChangeListener(new ChangeListener() {
 		    public void stateChanged(ChangeEvent e) {
 		        if(tabbedPane.getSelectedIndex() == 1) {
-		        	List<String> fnNameList = app.loadFunctionNameCmb();
+		        	List<String> fnNameList = app.loadFunctionNameCmb(selectedEmpId);
 		        	if(!fnNameList.isEmpty()) {
 		        		for(int i=0;i<fnNameList.size();i++) {
 		        			fnNameCmb2.addItem(fnNameList.get(i));
@@ -317,13 +350,29 @@ public class StatusDetails extends JFrame {
 		tabbedPane.addTab("UPDATE", null, panel_1, null);
 		
 		
-		JLabel label_2 = new JLabel("StoryId");
+		JLabel label_2 = new JLabel("EmpId");
 		label_2.setBounds(10, 11, 67, 21);
 		panel_1.add(label_2);
 		
+		empCmbBox = new JComboBox();
+		empCmbBox.setBounds(77, 11, 124, 20);
+//		empCmbBox.addItem("1487");
+//		empCmbBox.addItem("1113");//Arun
+//		empCmbBox.addItem("1145");//Logesh
+//		empCmbBox.addItem("1158");//Kalai
+//		empCmbBox.addItem("970");//Pavi
+		empCmbBox.addItem("Thamilarasu");
+		empCmbBox.addItem("Arunprasad");
+		empCmbBox.addItem("Logesh");
+		empCmbBox.addItem("Kalaimathi");
+		empCmbBox.addItem("Pavithra");
+		empCmbBox.addItem("Vinothkumar");
+		empCmbBox.addItem("Manikandan");
+		panel_1.add(empCmbBox);
+		
 		storyIdtxt2 = new JTextField();
 		storyIdtxt2.setColumns(10);
-		storyIdtxt2.setBounds(77, 11, 124, 20);
+		storyIdtxt2.setBounds(173, 385, 109, 20);
 		storyIdtxt2.setEditable(false);
 		panel_1.add(storyIdtxt2);
 		
@@ -488,16 +537,129 @@ public class StatusDetails extends JFrame {
 		final JRadioButton rdbtnTransaction2 = new JRadioButton("Transaction");
 		rdbtnTransaction2.setBounds(73, 382, 109, 23);
 		panel_1.add(rdbtnTransaction2);
+		//-------------------------------------------------------------------------------------------------------------
+		JPanel panel_3 = new JPanel();
+		panel_3.setLayout(null);
+		tabbedPane.addTab("STATUS", null, panel_3, null);
 		
-		JPanel panel_2 = new JPanel();
-		tabbedPane.addTab("STATUS", null, panel_2, null);
+		JLabel lblDeleteFunction = new JLabel("Delete Function Entry");
+		lblDeleteFunction.setBounds(10, 43, 124, 21);
+		panel_3.add(lblDeleteFunction);
 		
-		JButton btnDownload = new JButton("Download");
-		panel_2.add(btnDownload);
+		JLabel lblTeamStatusReport = new JLabel("Individual Report");
+		lblTeamStatusReport.setBounds(10, 121, 124, 17);
+		panel_3.add(lblTeamStatusReport);
+		
+		JComboBox empIdCmb3 = new JComboBox();
+		empIdCmb3.setBounds(158, 119, 124, 20);
+		panel_3.add(empIdCmb3);
+		
+		JLabel lblStatusReport = new JLabel("Status Report");
+		lblStatusReport.setBounds(183, 11, 89, 21);
+		panel_3.add(lblStatusReport);
+		
+		final JRadioButton rdbtnMaster3 = new JRadioButton("Master");
+		rdbtnMaster3.setSelected(true);
+		rdbtnMaster3.setBounds(158, 75, 67, 23);
+		panel_3.add(rdbtnMaster3);
+		
+		final JRadioButton rdbtnTransaction3 = new JRadioButton("Transaction");
+		rdbtnTransaction3.setBounds(248, 75, 109, 23);
+		panel_3.add(rdbtnTransaction3);
+		
+		rdbtnMaster3.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					rdbtnTransaction3.setSelected(false);
+					screenType3 = "Master";
+			    }
+			    else if (e.getStateChange() == ItemEvent.DESELECTED) {
+			    	rdbtnTransaction3.setSelected(true);
+			    	screenType3 = "Transaction";
+			    }
+			}
+		});
+		rdbtnTransaction3.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					rdbtnMaster3.setSelected(false);
+					screenType3 = "Transaction";
+			    }
+			    else if (e.getStateChange() == ItemEvent.DESELECTED) {
+			    	rdbtnMaster3.setSelected(true);
+			    	screenType3 = "Master";
+			    }
+			}
+		});
+		
+		final JComboBox moduleCmb3 = new JComboBox();
+		moduleCmb3.setBounds(158, 43, 124, 20);
+		panel_3.add(moduleCmb3);
+		
+		moduleMap.keySet().forEach(action -> {
+			moduleCmb3.addItem(action);
+		});
+		moduleCmb3.setSelectedItem("Account Payable");
+//		for(int j=0;j<moduleMap.keySet().size()-1;j++) {
+//			moduleCmb3.addItem(moduleMap.keySet().);
+//		}
+		
+		final JComboBox fnNameCmb3 = new JComboBox();
+		fnNameCmb3.setBounds(305, 43, 124, 20);
+		panel_3.add(fnNameCmb3);
+
+		functionList3 = moduleMap.get("Account Payable");
+		allowAction3 = false;
+		fnNameCmb3.removeAllItems();
+		allowAction3 = true;
+		for(int i=0;i<functionList3.size();i++) {
+			fnNameCmb3.addItem(functionList3.get(i));
+		}
+		
+		moduleCmb3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(allowAction3) {
+					functionList3 = moduleMap.get(moduleCmb3.getSelectedItem());
+					allowAction3 = false;
+					fnNameCmb3.removeAllItems();
+					allowAction3 = true;
+					for(int i=0;i<functionList3.size();i++) {
+						fnNameCmb3.addItem(functionList3.get(i));
+					}
+				}
+			}
+		});
+		
+		Button deleteBtn3 = new Button("Delete");
+		deleteBtn3.setBounds(363, 76, 70, 22);
+		panel_3.add(deleteBtn3);
+		
+		table = new JTable();
+		table.setBounds(27, 157, 419, 164);
+		panel_3.add(table);
+		
+		JScrollBar scrollBar = new JScrollBar();
+		scrollBar.setBounds(429, 157, 17, 164);
+		panel_3.add(scrollBar);
+		
+		JButton btnDownload = new JButton("Team Status Download");
+		btnDownload.setBounds(152, 358, 182, 23);
+		panel_3.add(btnDownload);
+		
+		JButton btnViewInGrid = new JButton("View in Grid");
+		btnViewInGrid.setBounds(305, 118, 109, 23);
+		panel_3.add(btnViewInGrid);
 		
 		btnDownload.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				app.downloadDetails();
+			}
+		});
+		
+		deleteBtn3.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				app.deleteRecord(fnNameCmb3.getSelectedItem(),screenType3);
 			}
 		});
 		
@@ -649,56 +811,73 @@ public class StatusDetails extends JFrame {
 			    }*/
 			}
 		});
+		
+		empCmbBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				selectedEmpId = empDetailsMap.get(empCmbBox.getSelectedItem());
+				allowAction = false;
+				fnNameCmb2.removeAllItems();
+				allowAction = true;
+				List<String> fnNameList = app.loadFunctionNameCmb(selectedEmpId);
+	        	if(!fnNameList.isEmpty()) {
+	        		for(int i=0;i<fnNameList.size();i++) {
+	        			fnNameCmb2.addItem(fnNameList.get(i));
+	        		}
+	        	}
+			}
+		});
+
 		fnNameCmb2.addActionListener (new ActionListener () {
 		    public void actionPerformed(ActionEvent event) {
-				Map<String, String> detailsMap = app.loadDetails(fnNameCmb2.getSelectedItem(),screenType2);
-				if(!detailsMap.isEmpty()) {
-					if(detailsMap.get("screenType").equals("Master")){
-						rdbtnMaster2.setSelected(true);
-						rdbtnTransaction2.setSelected(false);
+		    	if(allowAction) {
+		    		Map<String, String> detailsMap = app.loadDetails(fnNameCmb2.getSelectedItem(),screenType2);
+					if(!detailsMap.isEmpty()) {
+						if(detailsMap.get("screenType").equals("Master")){
+							rdbtnMaster2.setSelected(true);
+							rdbtnTransaction2.setSelected(false);
+						}else {
+							rdbtnMaster2.setSelected(false);
+							rdbtnTransaction2.setSelected(true);
+						}
+						storyIdtxt2.setText(detailsMap.get("storyIdtxt2"));
+						subSystxt2.setText(detailsMap.get("subSystxt2"));
+						moduleTxt2.setText(detailsMap.get("moduleTxt2"));
+						
+						Calendar cal;
+						try {
+						    cal = Calendar.getInstance();
+						    cal.setTime(dateFormat.parse(detailsMap.get("startDate2")));
+						    startDate2.setCalendar(cal);
+						    cal = Calendar.getInstance();
+						    cal.setTime(dateFormat.parse(detailsMap.get("endDate2")));
+						    endDate2.setCalendar(cal);
+						} catch (ParseException e) {
+						    e.printStackTrace();
+						}
+						
+//						startDate2.setCalendar(arg0);Text(detailsMap.get("storyIdCmb2"));
+//						endDate2.setText(detailsMap.get("storyIdCmb2"));
+						statusCmb2.setSelectedItem(detailsMap.get("statusCmb2"));
+						initTableCmb2.setSelectedItem(detailsMap.get("initTableCmb2"));
+						initScreenCmb2.setSelectedItem(detailsMap.get("initScreenCmb2"));
+						currTableCmb2.setSelectedItem(detailsMap.get("currTableCmb2"));
+						currScreenCmb2.setSelectedItem(detailsMap.get("currScreenCmb2"));
+						doneCmb2.setSelectedItem(detailsMap.get("doneCmb2"));
+						appGenArea2.setText(detailsMap.get("appGenArea2"));
+						changeReqArea2.setText(detailsMap.get("changeReqArea2"));
+						tableArea2.setText(detailsMap.get("tableArea2"));
+						remarksArea2.setText(detailsMap.get("remarksArea2"));
 					}else {
-						rdbtnMaster2.setSelected(false);
-						rdbtnTransaction2.setSelected(true);
+						if(rdbtnMaster2.isSelected()) {
+							rdbtnTransaction2.setSelected(true);
+							screenType2 = "Transaction";
+						}else {
+							rdbtnMaster2.setSelected(true);
+							screenType2 = "Master";
+						}
+//						JOptionPane.showMessageDialog(null, "No Data Found!!! Change fnName or screenType");
 					}
-					storyIdtxt2.setText(detailsMap.get("storyIdtxt2"));
-					subSystxt2.setText(detailsMap.get("subSystxt2"));
-					moduleTxt2.setText(detailsMap.get("moduleTxt2"));
-					
-					Calendar cal;
-					try {
-					    cal = Calendar.getInstance();
-					    cal.setTime(dateFormat.parse(detailsMap.get("startDate2")));
-					    startDate2.setCalendar(cal);
-					    cal = Calendar.getInstance();
-					    cal.setTime(dateFormat.parse(detailsMap.get("endDate2")));
-					    endDate2.setCalendar(cal);
-					} catch (ParseException e) {
-					    e.printStackTrace();
-					}
-					
-//					startDate2.setCalendar(arg0);Text(detailsMap.get("storyIdCmb2"));
-//					endDate2.setText(detailsMap.get("storyIdCmb2"));
-					statusCmb2.setSelectedItem(detailsMap.get("statusCmb2"));
-					initTableCmb2.setSelectedItem(detailsMap.get("initTableCmb2"));
-					initScreenCmb2.setSelectedItem(detailsMap.get("initScreenCmb2"));
-					currTableCmb2.setSelectedItem(detailsMap.get("currTableCmb2"));
-					currScreenCmb2.setSelectedItem(detailsMap.get("currScreenCmb2"));
-					doneCmb2.setSelectedItem(detailsMap.get("doneCmb2"));
-					appGenArea2.setText(detailsMap.get("appGenArea2"));
-					changeReqArea2.setText(detailsMap.get("changeReqArea2"));
-					tableArea2.setText(detailsMap.get("tableArea2"));
-					remarksArea2.setText(detailsMap.get("remarksArea2"));
-					
-				}else {
-					if(rdbtnMaster2.isSelected()) {
-						rdbtnTransaction2.setSelected(true);
-						screenType2 = "Transaction";
-					}else {
-						rdbtnMaster2.setSelected(true);
-						screenType2 = "Master";
-					}
-//					JOptionPane.showMessageDialog(null, "No Data Found!!! Change fnName or screenType");
-				}
+		    	}
 			}
 		});
 	}

@@ -188,7 +188,8 @@ public class App {
 		} 
 	}
 
-	public List<String> loadFunctionNameCmb() {
+	
+	public List<String> loadFunctionNameCmb(int empId) {
 		Connection conn = null; 
 		Statement stmt = null; 
 		List<String> fnNameList = new ArrayList<String>();
@@ -200,12 +201,23 @@ public class App {
 			System.out.println("Loading functionName from given database...");
 			stmt = conn.createStatement();
 
-			String sql1 = "select * FROM STATUSDETAILS";
+//			String sql1 = "select * FROM STATUSDETAILS";
+//			String sql2 = "select DISTINCT empid FROM STATUSDETAILS";
+			String sql3 = "select fnname FROM STATUSDETAILS where empid = "+empId;
 
-			ResultSet rs = stmt.executeQuery(sql1);
+			ResultSet rs = stmt.executeQuery(sql3);
+//			ResultSet rs2 = stmt.executeQuery(sql2);
+//			ResultSet rs3 = stmt.executeQuery(sql3);
+			
 			while(rs.next()) {
 				fnNameList.add(rs.getString("fnname"));
 			}
+//			while(rs3.next()) {
+//				fnNameList2.add(rs3.getString("fnname"));
+//			}
+//			while(rs2.next()) {
+//				fnNameList2.add(rs2.getString("empid"));
+//			}
 			if(!fnNameList.isEmpty()) {
 				System.out.println("functionName loaded Successfully !!!");
 			}else {
@@ -436,6 +448,41 @@ public class App {
 		} catch(Exception e) {
 			e.printStackTrace(); 
 		} finally {
+			try{ 
+				if(stmt!=null) stmt.close(); 
+			} catch(SQLException se2) { 
+			}
+			try { 
+				if(conn!=null) conn.close(); 
+			} catch(SQLException se){ 
+				se.printStackTrace(); 
+			}
+		}
+
+	}
+
+	public void deleteRecord(Object fnName, String screenType3) {
+		Connection conn = null;
+		Statement stmt = null;
+		Map<String,String> detail2Map = new HashMap<String, String>();
+		try { 
+			Class.forName(JDBC_DRIVER); 
+
+			conn = DriverManager.getConnection(DB_URL,USER,PASS);
+
+			stmt = conn.createStatement();
+
+			String sql1 = "delete FROM STATUSDETAILS where fnname = '"+fnName.toString()+"' and screentype = '"+screenType3+"'";
+
+			int rs = stmt.executeUpdate(sql1);
+			JOptionPane.showMessageDialog(null, "Record Deleted Successfully!!!");
+			stmt.close(); 
+			conn.close(); 
+		}catch(SQLException se) { 
+			se.printStackTrace(); 
+		} catch(Exception e) { 
+			e.printStackTrace(); 
+		} finally { 
 			try{ 
 				if(stmt!=null) stmt.close(); 
 			} catch(SQLException se2) { 

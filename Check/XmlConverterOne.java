@@ -31,6 +31,7 @@ public class XmlConverterOne {
 	
 	public static void main(String ak[]) throws SAXException, IOException{
 		try {
+			Map<String,Map<String,String>> allTagsMap = new HashMap<>();
 			Map<String,String> currencyListMap = new HashMap<>();
 			
 			currencyListMap.put("MAILINGNAME", "INR");
@@ -39,6 +40,8 @@ public class XmlConverterOne {
 			currencyListMap.put("DECIMALSYMBOL", "paise");
 			currencyListMap.put("DECIMALPLACES", "2");
 			currencyListMap.put("DECIMALPLACESFORPRINTING", "2");
+			
+			allTagsMap.put("Currency$", currencyListMap);
 			
 			String companyName = "Company1";
 			
@@ -103,31 +106,82 @@ public class XmlConverterOne {
 			reqData.appendChild(tallyMessage);
 			
 			dynamicTag = doc.createElement(tagType[i]);
-			dynamicTag.setAttribute("NAME","$");
+			
 			dynamicTag.setAttribute("RESERVEDNAME","");
+			dynamicTag.setAttribute("NAME","$");
+			dynamicTag.setAttribute("ACTION","Create");
 			tallyMessage.appendChild(dynamicTag);
 			
-			doc = makeCurrencyTags(tallyMessage,doc,currencyListMap);
+			doc = makeDynamicTags(dynamicTag,doc,currencyListMap,tagType[i]);
 			
 		}
 		
 		return doc;
 	}
 
-	private static Document makeCurrencyTags(Element tallyMessage, Document doc, Map<String, String> currencyListMap) {
+	private static Document makeDynamicTags(Element dynamicTag, Document doc, Map<String, String> currencyListMap, String tagType) {
 		Element currencyDynamicTag;
-		
+		switch(tagType){
+		case "CURRENCY":
+			for (Map.Entry<String, String> entry : currencyListMap.entrySet()) {
+				currencyDynamicTag = doc.createElement(entry.getKey());
+				currencyDynamicTag.appendChild(doc.createTextNode(entry.getValue()));
+				dynamicTag.appendChild(currencyDynamicTag);
+			}
+			break;
+		case "GROUP":
+			Element parentGroup = doc.createElement("PARENT");
+			parentGroup.setTextContent("Current Liabilities");//Apppend Dynamic
+			Element isCostCentre = doc.createElement("ISCOSTCENTRESON");
+			isCostCentre.setTextContent("No");
+			Element langName = doc.createElement("LANGUAGENAME.LIST");
+			dynamicTag.appendChild(parentGroup);
+			dynamicTag.appendChild(isCostCentre);
+			dynamicTag.appendChild(langName);
+			
+			Element nameList = doc.createElement("NAME.LIST");
+			nameList.setAttribute("TYPE", "String");
+			Element typeName = doc.createElement("NAME");
+			typeName.setTextContent("Sundry Creditors"); //Append Dynamic
+			nameList.appendChild(typeName);
+			Element langId = doc.createElement("LANGUAGEID");
+			langId.setTextContent("1033");
+			
+			langName.appendChild(nameList);
+			langName.appendChild(langId);
+			
+			break;
+		case "LEDGER":
+			Element parentLedgerGroup = doc.createElement("PARENT");
+			parentLedgerGroup.setTextContent("Cash-in-Hand");//Apppend Dynamic
+			Element taxType = doc.createElement("TAXTYPE");
+			taxType.setTextContent("Others");
+			Element ledgerLangName = doc.createElement("LANGUAGENAME.LIST");
+			dynamicTag.appendChild(parentLedgerGroup);
+			dynamicTag.appendChild(taxType);
+			dynamicTag.appendChild(ledgerLangName);
+			
+			Element ledgerNameList = doc.createElement("NAME.LIST");
+			ledgerNameList.setAttribute("TYPE", "String");
+			Element ledgerName = doc.createElement("NAME");
+			ledgerName.setTextContent("Cash"); //Append Dynamic
+			ledgerNameList.appendChild(ledgerName);
+			Element ledgerLangId = doc.createElement("LANGUAGEID");
+			ledgerLangId.setTextContent("1033");
+			
+			ledgerLangName.appendChild(ledgerNameList);
+			ledgerLangName.appendChild(ledgerLangId);
+			break;
+		default:
+			break;
+		}
 /*		currencyListMap.forEach((key,value) -> {
 			currencyDynamicTag = doc.createElement(key);
 			currencyDynamicTag.appendChild(doc.createTextNode(value));
 			tallyMessage.appendChild(currencyDynamicTag);
 		});*/
 		
-		for (Map.Entry<String, String> entry : currencyListMap.entrySet()) {
-			currencyDynamicTag = doc.createElement(entry.getKey());
-			currencyDynamicTag.appendChild(doc.createTextNode(entry.getValue()));
-			tallyMessage.appendChild(currencyDynamicTag);
-        }
+		
 		
 		return doc;
 	}
